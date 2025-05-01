@@ -17,8 +17,22 @@ def show_tickers():
     content = """
         <a href='#' id='MSFT'><img height='60px' width='60px' src='https://banner2.cleanpng.com/20180609/jq/aa8dbj2or.webp'></a>
         <a href='#' id='AAPL'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg'></a>
+        <a href='#' id='GOOGL'><img height='60px' width='60px' src='https://www.citypng.com/public/uploads/preview/google-logo-icon-gsuite-hd-701751694791470gzbayltphh.png'></a>
+        <a href='#' id='AMZN'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png'></a>
+        <a href='#' id='TSLA'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/600px-Tesla_logo.png'></a>
     """
     return content
+
+# Load S&P500 tickers
+def get_sp500_tickers():
+    # Load S&P500 tickers from CSV
+    url = "https://gist.githubusercontent.com/ZeccaLehn/f6a2613b24c393821f81c0c1d23d4192/raw/fe4638cc5561b9b261225fd8d2a9463a04e77d19/SP500.csv"
+    try:
+        sp500 = pd.read_csv(url)
+        return sp500['Symbol'].tolist()
+    except Exception as e:
+        st.error(f"Error loading S&P 500 tickers: {e}")
+        return []
 
 # Make the images clickable using st_click_detector
 def get_ticker():
@@ -55,4 +69,3 @@ if ticker != "":
     df = get_dataframe(ticker)
     fig = plot_candlestick(df, ticker)
     show_plot(fig)
-
