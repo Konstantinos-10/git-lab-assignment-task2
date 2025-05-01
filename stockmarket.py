@@ -23,6 +23,17 @@ def show_tickers():
     """
     return content
 
+# Load S&P500 tickers
+def get_sp500_tickers():
+    # Load S&P500 tickers from CSV
+    url = "https://gist.githubusercontent.com/ZeccaLehn/f6a2613b24c393821f81c0c1d23d4192/raw/fe4638cc5561b9b261225fd8d2a9463a04e77d19/SP500.csv"
+    try:
+        sp500 = pd.read_csv(url)
+        return sp500['Symbol'].tolist()
+    except Exception as e:
+        st.error(f"Error loading S&P 500 tickers: {e}")
+        return []
+
 # Make the images clickable using st_click_detector
 def get_ticker():
     content = show_tickers()
@@ -59,3 +70,30 @@ if ticker != "":
     fig = plot_candlestick(df, ticker)
     show_plot(fig)
 
+# Modify the main section of the app
+st.title("Stock Market Data Viewer")
+
+# Text input for ticker symbol
+user_ticker = st.text_input("Enter a stock ticker (e.g., AAPL, MSFT):", "AAPL")
+
+# Validate ticker
+sp500_tickers = get_sp500_tickers()
+if user_ticker:
+    try:
+        # Try to get stock data
+        stock_data = yf.Ticker(user_ticker)
+        info = stock_data.info
+        if 'regularMarketPrice' not in info and 'currentPrice' not in info:
+            st.warning(f"Could not find data for ticker {user_ticker}")
+        else:
+            # If ticker not in S&P500, show warning but still display data
+            if user_ticker not in sp500_tickers:
+                st.warning(f"Note: {user_ticker} is not in the S&P 500 index.")
+            
+            # Get and display data
+            df = get_dataframe(user_ticker)
+            fig = plot_candlestick(df, user_ticker)
+            show_plot(fig)
+    except Exception as e:
+        st.error(f"Error loading data for {user_ticker}: {e}")
+        st.info("Please check that you entered a valid ticker symbol.")
