@@ -17,6 +17,9 @@ def show_tickers():
     content = """
         <a href='#' id='MSFT'><img height='60px' width='60px' src='https://banner2.cleanpng.com/20180609/jq/aa8dbj2or.webp'></a>
         <a href='#' id='AAPL'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg'></a>
+        <a href='#' id='GOOGL'><img height='60px' width='60px' src='https://www.citypng.com/public/uploads/preview/google-logo-icon-gsuite-hd-701751694791470gzbayltphh.png'></a>
+        <a href='#' id='AMZN'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png'></a>
+        <a href='#' id='TSLA'><img height='60px' width='60px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/600px-Tesla_logo.png'></a>
     """
     return content
 
