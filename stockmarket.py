@@ -40,10 +40,13 @@ def get_ticker():
     clicked = click_detector(content)
     return clicked
 
-# Get the stock dataframe for the given ticker using yfinance
-def get_dataframe(ticker):
+# # Get the stock dataframe for the given ticker using yfinance
+def get_dataframe(ticker, start_date=None, end_date=None):
     stock_data = yf.Ticker(ticker)
-    df = stock_data.history(period="1y")
+    if start_date and end_date:
+        df = stock_data.history(start=start_date, end=end_date)
+    else:
+        df = stock_data.history(period="1y")
     df.reset_index(inplace=True)  # This moves the date from index to a column
     return df
 
@@ -140,8 +143,20 @@ def main():
         # Method 2: Enter ticker
         st.subheader("Option 2: Enter a stock ticker")
         user_ticker = st.text_input("Enter a stock ticker (e.g., AAPL, MSFT):", "")
+
+        # Feature 2: Date range selection
+        st.subheader("Select Date Range")
         
-        # Validate ticker
+        # Default date range (1 year)
+        default_end_date = pd.Timestamp.now().strftime('%Y-%m-%d')
+        default_start_date = (pd.Timestamp.now() - pd.Timedelta(days=365)).strftime('%Y-%m-%d')
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            start_date = st.date_input("Start date", value=pd.to_datetime(default_start_date))
+        with col2:
+            end_date = st.date_input("End date", value=pd.to_datetime(default_end_date))
+        
         selected_ticker = ticker if ticker else user_ticker
         
         if selected_ticker:
