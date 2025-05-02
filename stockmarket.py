@@ -64,6 +64,89 @@ def plot_candlestick(df, ticker):
 def show_plot(fig):
     st.plotly_chart(fig, use_container_width=True)
 
+ #Display stock information
+def display_stock_info(ticker_symbol):
+    st.subheader(f"Stock Information for {ticker_symbol}")
+    
+    try:
+        # Get stock info
+        stock = yf.Ticker(ticker_symbol)
+        info = stock.info
+        
+        # Create columns for the information
+        col1, col2, col3 = st.columns(3)
+        
+        # First column
+        with col1:
+            try:
+                current_price = info.get('currentPrice', info.get('regularMarketPrice', 'N/A'))
+                st.metric("Current Price", f"${current_price}" if current_price != 'N/A' else 'N/A')
+            except:
+                st.metric("Current Price", "N/A")
+                
+            try:
+                market_cap = info.get('marketCap', 'N/A')
+                market_cap_str = f"${market_cap:,}" if market_cap != 'N/A' else 'N/A'
+                st.metric("Market Cap", market_cap_str)
+            except:
+                st.metric("Market Cap", "N/A")
+                
+            try:
+                sector = info.get('sector', 'N/A')
+                st.metric("Sector", sector)
+            except:
+                st.metric("Sector", "N/A")
+        
+        # Second column
+        with col2:
+            try:
+                pe_ratio = info.get('trailingPE', 'N/A')
+                st.metric("P/E Ratio", f"{pe_ratio:.2f}" if pe_ratio != 'N/A' else 'N/A')
+            except:
+                st.metric("P/E Ratio", "N/A")
+                
+            try:
+                dividend_yield = info.get('dividendYield', 'N/A')
+                dividend_str = f"{dividend_yield * 100:.2f}%" if dividend_yield != 'N/A' else 'N/A'
+                st.metric("Dividend Yield", dividend_str)
+            except:
+                st.metric("Dividend Yield", "N/A")
+                
+            try:
+                beta = info.get('beta', 'N/A')
+                st.metric("Beta", f"{beta:.2f}" if beta != 'N/A' else 'N/A')
+            except:
+                st.metric("Beta", "N/A")
+        
+        # Third column
+        with col3:
+            try:
+                week_high = info.get('fiftyTwoWeekHigh', 'N/A')
+                st.metric("52 Week High", f"${week_high:.2f}" if week_high != 'N/A' else 'N/A')
+            except:
+                st.metric("52 Week High", "N/A")
+                
+            try:
+                week_low = info.get('fiftyTwoWeekLow', 'N/A')
+                st.metric("52 Week Low", f"${week_low:.2f}" if week_low != 'N/A' else 'N/A')
+            except:
+                st.metric("52 Week Low", "N/A")
+                
+            try:
+                avg_volume = info.get('averageVolume', 'N/A')
+                vol_str = f"{avg_volume:,}" if avg_volume != 'N/A' else 'N/A'
+                st.metric("Avg. Volume", vol_str)
+            except:
+                st.metric("Avg. Volume", "N/A")
+        
+        # Business summary
+        if info.get('longBusinessSummary'):
+            with st.expander("Business Summary"):
+                st.write(info.get('longBusinessSummary'))
+    
+    except Exception as e:
+        st.error(f"Error displaying stock information: {e}")
+
 def portfolio_tracker():
     st.header("Investment Portfolio Tracker")
     
@@ -168,6 +251,7 @@ def main():
                 if df.empty:
                     st.warning(f"No data available for {selected_ticker}.")
                 else:
+                    display_stock_info(selected_ticker)
                     # Show stock chart
                     fig = plot_candlestick(df, selected_ticker)
                     show_plot(fig)
