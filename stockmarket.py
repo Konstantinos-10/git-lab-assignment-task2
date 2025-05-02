@@ -211,6 +211,37 @@ def portfolio_tracker():
             st.session_state.portfolio = []
             st.experimental_rerun()
 
+# Display latest news for a stock
+def display_stock_news(ticker_symbol):
+    st.subheader(f"Latest News for {ticker_symbol}")
+    
+    try:
+        # Get stock news
+        stock = yf.Ticker(ticker_symbol)
+        news = stock.news
+        
+        if not news:
+            st.info(f"No recent news found for {ticker_symbol}")
+            return
+        
+        # Display news items
+        for i, item in enumerate(news[:5]):  # Show top 5 news items
+            with st.container():
+                st.markdown(f"### [{item['title']}]({item['link']})")
+                
+                # Format date
+                published = pd.to_datetime(item['providerPublishTime'], unit='s')
+                st.caption(f"Published: {published.strftime('%Y-%m-%d %H:%M')} | Source: {item.get('publisher', 'Unknown')}")
+                
+                # Display summary
+                if item.get('summary'):
+                    st.markdown(item['summary'])
+                
+                st.markdown("---")
+    
+    except Exception as e:
+        st.error(f"Error fetching news: {e}")
+
 # Main app
 def main():
     st.title("📈 Stock Market Analysis App")
@@ -255,6 +286,8 @@ def main():
                     # Show stock chart
                     fig = plot_candlestick(df, selected_ticker)
                     show_plot(fig)
+
+                    display_stock_news(selected_ticker)
                     
                     # Warning if not in S&P500
                     sp500_tickers = get_sp500_tickers()
