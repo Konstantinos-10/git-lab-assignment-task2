@@ -5,11 +5,11 @@ import pandas as pd
 from st_click_detector import click_detector
 
 # Ideas for improvement:
-# 1. Add more stock tickers to the list.  #E
+# 1. Add more stock tickers to the list.  #E - Completed
 # 2. Allow users to input a custom date range for the stock data. #E
-# 3. Allow users to provide their own tickers, with error handling for tickers not in the S&P500. (Remove the ability to click on the icons) #M
+# 3. Allow users to provide their own tickers, with error handling for tickers not in the S&P500. (Remove the ability to click on the icons) #M - Completed
 # 4. Show information about the stock (e.g., market cap, P/E ratio) alongside the chart. #M
-# 5. Investment portfolio tracker: Allow users to input multiple stocks and return their portfolio's current worth. #H
+# 5. Investment portfolio tracker: Allow users to input multiple stocks and return their portfolio's current worth. #H - Completed
 # 6. Add a news section to show the latest news related to the selected stock (you can use the news attribute of yfinance.Ticker). #H
 
 # Create the images as a href elements with tickers as IDs
@@ -61,16 +61,6 @@ def plot_candlestick(df, ticker):
 def show_plot(fig):
     st.plotly_chart(fig, use_container_width=True)
 
-# Main Streamlit app
-ticker = get_ticker()
-
-# Every time something happens, Streamlit reruns the script so when an image is clicked, the script will rerun and the ticker will not be empty.
-if ticker != "":
-    df = get_dataframe(ticker)
-    fig = plot_candlestick(df, ticker)
-    show_plot(fig)
-
-# Portfolio Tracker
 def portfolio_tracker():
     st.header("Investment Portfolio Tracker")
     
